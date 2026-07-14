@@ -31,9 +31,16 @@ const THREADS = {
   lb1: { name: '議事廳外', route: 'liubei', requires: () => true },
   lb2: { name: '月下對談', route: 'liubei', requires: (s) => s.affection.liubei >= 3 },
   lb3: { name: '心事', route: 'liubei', requires: (s) => s.affection.liubei >= 5 },
+  lb4: { name: '並肩', route: 'liubei', requires: (s) => !!s.completedThreads.lb3 },
+  lb5: { name: '抉擇', route: 'liubei', requires: (s) => !!s.completedThreads.lb4 },
   zl1: { name: '羽扇下的試探', route: 'zhuge', requires: () => true },
   zl2: { name: '藏書閣', route: 'zhuge', requires: (s) => s.affection.zhuge >= 3 },
   zl3: { name: '夜訪', route: 'zhuge', requires: (s) => s.affection.zhuge >= 5 },
+  zl4: { name: '心結', route: 'zhuge', requires: (s) => !!s.completedThreads.zl3 },
+  zl5: { name: '分寸', route: 'zhuge', requires: (s) => !!s.completedThreads.zl4 },
+  zy1: { name: '習武', route: 'zhaoyun', requires: () => true },
+  zy2: { name: '篝火夜話', route: 'zhaoyun', requires: (s) => s.affection.zhaoyun >= 4 },
+  zy3: { name: '剖白', route: 'zhaoyun', requires: (s) => s.affection.zhaoyun >= 6 },
   gf1: {
     name: '甘夫人的坦言',
     route: 'ganfuren',
@@ -58,6 +65,34 @@ const CODEX = {
   clue_xinghun: {
     title: '「形婚」之秘',
     text: '甘夫人親口道破這個世界心照不宣的規矩——男子之間若有深情，明面上仍需一位正室夫人，撐起「尋常人家」的模樣。她的婚姻，不過是「形婚」二字。',
+  },
+  clue_lb_bond: {
+    title: '並肩的分寸',
+    text: '劉備坦言，這份見不得光的情，累了孔明，也累了明面上的妻室。而她，是府裡第一個知曉真相、卻仍選擇留下的人。',
+  },
+  clue_lb_choice: {
+    title: '玄德的抉擇',
+    text: '劉備親口道明：他給不了尋常的名分，孔明是心尖上的人，甘氏、糜氏是該擔的責任。他問她，可甘心留在這般不明不白的位置。',
+  },
+  clue_zl_bond: {
+    title: '孔明的心結',
+    text: '諸葛亮坦言，此生早已許給主公的大業與這個人，卻又忍不住為她牽掛——他怕的，是終究對不住兩邊。',
+  },
+  clue_zl_choice: {
+    title: '孔明的分寸',
+    text: '諸葛亮直言，做不到把心思毫無保留地交給一人，卻願給她一個不完整、卻絕不敷衍的位置。',
+  },
+  clue_zy1: {
+    title: '校場槍花',
+    text: '清晨校場，趙雲槍法如雪，難得卸下幾分軍中的沉肅，露出毫不設防的笑意。',
+  },
+  clue_zy2: {
+    title: '篝火夜話',
+    text: '趙雲坦言，自己此生只知精忠報國，卻也盼著往後若真有那麼個人，能坦坦蕩蕩，不必藏著掖著。',
+  },
+  clue_zy_choice: {
+    title: '子龍的剖白',
+    text: '趙雲鄭重表明心跡——願給她的，是堂堂正正、清清楚楚的一顆心，容不下半點藏掖。',
   },
 };
 
@@ -277,6 +312,82 @@ const SCENES = {
     ],
     next: 'hub',
   },
+  lb4: {
+    thread: 'lb4',
+    bg: 'garden_night',
+    lines: [
+      { text: '自書房那夜之後，{name}待劉備，竟生出幾分小心翼翼——知曉了他心底的秘密，卻不知該如何自處，連日裡，竟不自覺地與他保持著一段若有似無的距離。' },
+      { text: '這日黃昏，她在迴廊間躲避不及，正撞見劉備自議事廳出來。' },
+      { speaker: '劉備', text: '「這幾日，妳見了孤，總是繞道而行——是為了那晚的話？」（他語氣裡帶著幾分不易察覺的忐忑）' },
+    ],
+    choices: [
+      { text: '「使君說的是。小女子只是……不知該如何面對使君。」（坦然承認）', next: 'lb4b', effect: { affection: { liubei: 2 }, flags: ['lb4_honest'] } },
+      { text: '「使君多心了，小女子只是近日雜務繁忙。」（否認搪塞）', next: 'lb4b', effect: { affection: { liubei: 1 }, flags: ['lb4_deny'] } },
+    ],
+  },
+  lb4b: {
+    bg: 'garden_night',
+    lines: [
+      { speaker: '劉備', text: '「不必如此。」（他輕嘆一聲，神色間並無責怪）「那晚的話，孤原不該說給妳聽——是孤的錯，讓妳平白擔了這許多心事。」', cond: 'lb4_honest' },
+      { speaker: '劉備', text: '「是麼？」（他看著她，眼底有些了然，卻沒有戳破）「若當真是孤思多了，那便好。」', cond: 'lb4_deny' },
+      { text: '兩人並肩行至廊下，暮色四合，一時無話。' },
+      { speaker: '劉備', text: '「{name}，孤這一生，顛沛半世，能得孔明這樣的人相知相惜，已是意外之喜。可孤心裡也清楚——這份情，終究是見不得光的，累了他，也累了甘氏、糜氏這些明面上的妻室。」' },
+      { speaker: '劉備', text: '「唯獨妳……」（他頓了頓，似是斟酌著詞句）「妳是這府裡，第一個知曉了真相、卻仍選擇留下的人。孤想問妳一句——妳留下來，究竟是為了什麼？」' },
+    ],
+    choices: [
+      { text: '「小女子留下，是想親眼看看，這亂世之中，情義二字，究竟能走到多遠。」（含蓄表態）', next: 'lb4c', effect: { affection: { liubei: 3 }, flags: ['lb4_witness'] } },
+      { text: '「或許……小女子留下，是因為捨不得使君一人扛著這麼多。」（直接的情感流露）', next: 'lb4c', effect: { affection: { liubei: 4 }, flags: ['lb4_open_heart'] } },
+    ],
+  },
+  lb4c: {
+    bg: 'garden_night',
+    onEnter: { flags: ['clue_lb_bond'] },
+    lines: [
+      { text: '劉備怔住，隨即眼底泛起一層溼意，他伸手，極輕地覆上她的手背，動作間帶著幾分小心翼翼，像是怕嚇跑了什麼。', cond: 'lb4_open_heart' },
+      { speaker: '劉備', text: '「傻姑娘……」（他的聲音有些啞）「亂世兒女，情之一字，何必只容一人？孤不敢應承妳什麼，只是——往後這條路，孤想妳陪著走。」', cond: 'lb4_open_heart' },
+      { text: '劉備靜靜看她半晌，唇角緩緩牽起一絲極淡的笑意。', condNot: 'lb4_open_heart' },
+      { speaker: '劉備', text: '「陪著看……也好。」（他的聲音低了幾分）「只盼這一路，妳看得不會太失望。」', condNot: 'lb4_open_heart' },
+      { text: '暮色裡，兩人之間，那層原本客氣疏離的分寸，不知不覺淡去了大半。【劉備線 · 並肩 完】' },
+    ],
+    next: 'hub',
+  },
+  lb5: {
+    thread: 'lb5',
+    bg: 'study_night',
+    lines: [
+      { text: '又過了些時日，樊城軍務漸緊，劉備、諸葛亮皆是終日忙碌。這夜，{name}奉命送一疊軍報去書房，卻見劉備獨坐燈下，面前攤著一封尚未寫完的信。' },
+      { text: '見她進來，他忙將信紙翻扣過去，神色略顯窘迫。' },
+      { speaker: '劉備', text: '「無妨，是……寫給糜氏的家書。」（他苦笑一聲）「這些年，孤待她們，禮數周全，情分卻淺薄得很——寫封家書，竟也字字艱難。」' },
+      { text: '{name}忽然明白，這便是甘夫人所說的「形婚」二字，落在劉備這一頭，同樣是沉甸甸的虧欠。' },
+    ],
+    choices: [
+      { text: '「使君不必自責，甘夫人與糜夫人，想必都明白使君的難處。」（寬慰）', next: 'lb5b', effect: { affection: { liubei: 2 }, flags: ['lb5_comfort'] } },
+      { text: '「使君若心中有愧，何不待她們更好一些？」（直言不諱）', next: 'lb5b', effect: { affection: { liubei: 2 }, flags: ['lb5_challenge'] } },
+    ],
+  },
+  lb5b: {
+    bg: 'study_night',
+    lines: [
+      { speaker: '劉備', text: '「明白是一回事，甘心不甘心，又是另一回事。」他搖頭苦笑，「孤這一生，虧欠的人太多了。」', cond: 'lb5_comfort' },
+      { speaker: '劉備', text: '「妳說得對。」他微微一怔，隨即認真頷首，「是孤這些年，太過理所當然了。」', cond: 'lb5_challenge' },
+      { speaker: '劉備', text: '「{name}，孤今日想與妳說句實話——孤這一生，恐怕給不了妳一個尋常女子想要的名分。孔明是孤心尖上的人，甘氏、糜氏是孤明面上該擔的責任……妳若願意留在孤身邊，恐怕，也只能是這般不明不白的位置。」' },
+      { speaker: '劉備', text: '「孤不忍心叫妳陪著受委屈。所以想問妳——妳可甘心？」' },
+    ],
+    choices: [
+      { text: '「小女子從未奢求什麼名分。能陪在使君身邊，看著這亂世一點點清明起來，於小女子而言，已是心甘情願。」（給出承諾）', next: 'lb5c', effect: { affection: { liubei: 4 }, flags: ['lb_committed'] } },
+      { text: '「使君容小女子……再想想。」（保留猶豫）', next: 'lb5c', effect: { affection: { liubei: 1 }, flags: ['lb_undecided'] } },
+    ],
+  },
+  lb5c: {
+    bg: 'study_night',
+    onEnter: { flags: ['clue_lb_choice'] },
+    lines: [
+      { text: '劉備聞言，久久無言，末了，他伸手，將她冰涼的手掌整個包裹在掌心，低聲道：「這句話，孤記下了。」', cond: 'lb_committed' },
+      { text: '劉備聞言，並未露出失望之色，反倒鬆了口氣一般，笑道：「不急，妳慢慢想——孤等得起。」', cond: 'lb_undecided' },
+      { text: '窗外更深露重，燭火搖曳映著兩人交疊的影子。這一夜之後，{name}忽然明白，她與這段亂世情緣的糾葛，早已深得無法回頭。【劉備線 · 抉擇 完】' },
+    ],
+    next: 'hub',
+  },
 
   // ------------------------------------------------------------------
   // 諸葛亮線
@@ -363,6 +474,79 @@ const SCENES = {
     ],
     next: 'hub',
   },
+  zl4: {
+    thread: 'zl4',
+    bg: 'library_night',
+    lines: [
+      { text: '自夜訪之後，諸葛亮待{name}，添了幾分不易察覺的疏離——不是冷淡，卻像是刻意拉開了一段安全的距離。' },
+      { text: '這日她奉命送去軍情文書，諸葛亮接過，指尖不經意相觸，他卻像被燙到般迅速收回手。' },
+      { speaker: '諸葛亮', text: '「多謝。」（他垂眸，不再看她）「姑娘先回罷，亮還有軍務要理。」' },
+    ],
+    choices: [
+      { text: '「先生近日，似乎在躲著小女子？」（直接點破）', next: 'zl4b', effect: { affection: { zhuge: 2 }, flags: ['zl4_confront'] } },
+      { text: '依言告退，不多說什麼', next: 'zl4b', effect: { affection: { zhuge: 1 }, flags: ['zl4_retreat'] } },
+    ],
+  },
+  zl4b: {
+    bg: 'library_night',
+    lines: [
+      { text: '他執筆的手一頓，久久未落下一字。良久，他輕輕嘆息：「瞞不過妳。」', cond: 'zl4_confront' },
+      { text: '見她要走，諸葛亮忽而喚住她：「等等。」他放下筆，神色少見地有些躊躇。', cond: 'zl4_retreat' },
+      { speaker: '諸葛亮', text: '「那夜之後，亮想了許多。亮此生，早已許給了主公的大業，也許給了……主公這個人。這份心思，本不該再分出一絲一毫去牽掛旁人——可妳這雙眼睛，總是看得亮心裡發慌。」' },
+      { speaker: '諸葛亮', text: '「亮怕的，不是被人看穿，是怕自己……終究對不住主公，也對不住妳。」' },
+    ],
+    choices: [
+      { text: '「先生的心思，何必只往『對不住』三個字想？世間情分，本就未必要爭個先後。」（開解他）', next: 'zl4c', effect: { affection: { zhuge: 3 }, flags: ['zl4_reassure'] } },
+      { text: '「先生若當真為難，小女子往後，離先生遠一些便是。」（以退為進）', next: 'zl4c', effect: { affection: { zhuge: 2 }, flags: ['zl4_withdraw'] } },
+    ],
+  },
+  zl4c: {
+    bg: 'library_night',
+    onEnter: { flags: ['clue_zl_bond'] },
+    lines: [
+      { text: '諸葛亮怔怔看她，那雙素來能看透天下棋局的眼睛，此刻竟有片刻的茫然，繼而化作一絲極輕、極真實的笑意。', cond: 'zl4_reassure' },
+      { speaker: '諸葛亮', text: '「妳倒是敢說。」他低笑一聲，語氣裡卻是實實在在的鬆快，「也罷，亮便厚著臉皮，由著這份心思去了。」', cond: 'zl4_reassure' },
+      { text: '諸葛亮猛然抬眼，一把輕輕攥住她的袖口，力道不重，卻帶著明顯的急切。', cond: 'zl4_withdraw' },
+      { speaker: '諸葛亮', text: '「不必。」（他的聲音低啞）「亮好不容易，才敢承認這份心思——妳莫要，此刻又要收回去。」', cond: 'zl4_withdraw' },
+      { text: '燭火明滅間，兩人之間那道刻意築起的分寸，終究還是碎了一角。【諸葛亮線 · 心結 完】' },
+    ],
+    next: 'hub',
+  },
+  zl5: {
+    thread: 'zl5',
+    bg: 'study_night',
+    lines: [
+      { text: '劉備自樊城歸來那日，{name}遠遠瞧見諸葛亮迎上前去，兩人並肩而立，言笑晏晏——那一幕，與她記憶裡史書上「如魚得水」四字，分毫不差地重疊在了一起。' },
+      { text: '她心底忽然浮起一絲說不清道不明的酸澀，正欲轉身離開，卻被諸葛亮不知何時繞至身後，恰好瞧了個正著。' },
+      { speaker: '諸葛亮', text: '「怎麼，瞧著不太高興？」（他語氣帶笑，眼底卻藏著認真的探究）' },
+    ],
+    choices: [
+      { text: '「先生與使君情深意重，小女子瞧著，只覺得羨慕。」（坦白心底的酸澀）', next: 'zl5b', effect: { affection: { zhuge: 3 }, flags: ['zl5_honest'] } },
+      { text: '「先生多心了，小女子只是乏了。」（掩飾）', next: 'zl5b', effect: { affection: { zhuge: 1 }, flags: ['zl5_hide'] } },
+    ],
+  },
+  zl5b: {
+    bg: 'study_night',
+    lines: [
+      { speaker: '諸葛亮', text: '「亮明白妳的意思。只是……亮與主公之間，是這半生的情義；妳與亮之間，卻是另一樁尚未寫完的心事。這兩者，亮從未想過要分個孰輕孰重。」', cond: 'zl5_honest' },
+      { speaker: '諸葛亮', text: '「乏了便早些歇息。只是——亮這雙眼睛，向來看得比旁人清楚一些，妳自己心裡明白便好。」', cond: 'zl5_hide' },
+      { speaker: '諸葛亮', text: '「亮這一生，恐怕做不到把心思毫無保留地都交給一人。這話說出口，實在對不住妳。只是亮也不願拿虛情假意來哄騙妳——妳若願意，亮想給妳一個雖不完整、卻絕不敷衍的位置。」' },
+    ],
+    choices: [
+      { text: '「不完整也好。小女子要的，從來不是完整的先生，而是先生給的，是不是真心。」', next: 'zl5c', effect: { affection: { zhuge: 4 }, flags: ['zl_committed'] } },
+      { text: '「先生容小女子，再想一想。」', next: 'zl5c', effect: { affection: { zhuge: 1 }, flags: ['zl_undecided'] } },
+    ],
+  },
+  zl5c: {
+    bg: 'study_night',
+    onEnter: { flags: ['clue_zl_choice'] },
+    lines: [
+      { text: '諸葛亮長久地凝視著她，那向來從容自持的臉上，第一次浮現出近乎狼狽的動容。他伸手，極輕地將她鬢邊一縷散髮別到耳後，動作生澀，卻無比認真。', cond: 'zl_committed' },
+      { text: '諸葛亮並未催促，只是唇角微揚：「亮等得起。這一局棋，亮向來擅長慢慢下。」', cond: 'zl_undecided' },
+      { text: '夜風穿廊而過，捲起滿案竹簡輕響。【諸葛亮線 · 分寸 完】' },
+    ],
+    next: 'hub',
+  },
 
   // ------------------------------------------------------------------
   // 甘夫人線 —— 世界觀揭示
@@ -392,10 +576,101 @@ const SCENES = {
     ],
     next: 'hub',
   },
+
+  // ------------------------------------------------------------------
+  // 趙雲線
+  // ------------------------------------------------------------------
+  zy1: {
+    thread: 'zy1',
+    bg: 'courtyard_day',
+    lines: [
+      { text: '這日清晨，{name}於後院閒步，卻見趙雲一人在校場練槍，銀槍破空，槍花如雪，看得她一時看呆了眼。' },
+      { speaker: '趙雲', text: '（他收槍轉身，恰對上她的目光，朗聲一笑）「姑娘也對槍法感興趣？」' },
+      { text: '她本想搖頭，話到嘴邊，卻鬼使神差地換了說法。' },
+    ],
+    choices: [
+      { text: '「子龍將軍槍法如神，小女子看得入迷，倒想學上一招半式，日後好防身。」（主動請教）', next: 'zy1b', effect: { affection: { zhaoyun: 2 }, flags: ['zy_learn'] } },
+      { text: '「不過是碰巧路過，倒是打擾將軍練武了。」（客氣推辭）', next: 'zy1b', effect: { affection: { zhaoyun: 1 } } },
+    ],
+  },
+  zy1b: {
+    bg: 'courtyard_day',
+    onEnter: { flags: ['clue_zy1'] },
+    lines: [
+      { speaker: '趙雲', text: '「好說。」他大笑一聲，將手中長槍虛遞過來，「亂世之中，女子多學一分防身之術，總是好的。來，先站穩腳步。」', cond: 'zy_learn' },
+      { speaker: '趙雲', text: '「姑娘客氣了。」他將槍收好，目光卻多留了幾分，「只是這亂世之中，女子若能防身一二，總歸不是壞事。姑娘若哪日改了主意，儘管來尋我。」', condNot: 'zy_learn' },
+      { text: '那一個清晨，兵刃相擊之聲混著趙雲爽朗的笑聲，是{name}穿越以來，難得覺得踏實、輕快的一段時光。' },
+      { speaker: '趙雲', text: '「姑娘倒是學得快。」（他難得露出幾分毫不設防的笑意）「比軍中好些新兵蛋子，還要用心。」' },
+    ],
+    next: 'hub',
+  },
+  zy2: {
+    thread: 'zy2',
+    bg: 'garden_night',
+    lines: [
+      { text: '軍中偶有夜訓，{name}奉命隨行照料傷藥，夜裡與趙雲同坐篝火旁，四下唯有蟲鳴與炭火噼啪之聲。' },
+      { speaker: '趙雲', text: '「姑娘這些時日，瞧著心事重重。」（他撥弄著炭火，狀似隨意）「若是府裡有什麼難處，不妨說與我聽——我雖不比孔明先生足智多謀，卻好歹是個能聽人說話的。」' },
+    ],
+    choices: [
+      { text: '「將軍如何看待……使君與孔明先生之間的情分？」（試探他對世道的看法）', next: 'zy2b', effect: { affection: { zhaoyun: 2 }, flags: ['zy2_ask'] } },
+      { text: '「多謝將軍關心，只是這些事，一時也說不清。」（迴避）', next: 'zy2b', effect: { affection: { zhaoyun: 1 } } },
+    ],
+  },
+  zy2b: {
+    bg: 'garden_night',
+    onEnter: { flags: ['clue_zy2'] },
+    lines: [
+      { speaker: '趙雲', text: '他手上動作一頓，隨即坦然一笑：「姑娘既已瞧出來了，我便不瞞妳——這府裡的事，我這心不敢細算的粗人，也是明白幾分的。」', cond: 'zy2_ask' },
+      { speaker: '趙雲', text: '「我這一輩子，只知精忠報國四個字，兒女情長，向來不敢想太多——旁人怎麼活，我不置喙；只是我自己，倒盼著往後若真有那麼個人，能坦坦蕩蕩，不必藏著掖著。」', cond: 'zy2_ask' },
+      { speaker: '趙雲', text: '「說不清也無妨，這世道，說得清的事本就不多。」（他也不追問，只是往篝火裡添了根柴，火光映得他側臉一片溫和）', condNot: 'zy2_ask' },
+      { text: '篝火劈啪作響，{name}望著趙雲被火光映亮的側臉，忽然覺得，在這一堆糾纏不清的深情與算計之外，還能遇見這樣一個坦蕩磊落的人，竟是意外的慶幸。' },
+      { speaker: '趙雲', text: '「夜深了，早些歇息罷。」（他起身，將自己的外袍解下，輕輕搭在她肩上）「軍營夜寒，仔細著涼。」' },
+    ],
+    next: 'hub',
+  },
+  zy3: {
+    thread: 'zy3',
+    bg: 'path_forest',
+    lines: [
+      { text: '一場遭遇戰過後，趙雲渾身浴血地護送{name}退至安全處，直到確認她毫髮無傷，他緊繃的肩背才驟然鬆懈下來。' },
+      { speaker: '趙雲', text: '「妳沒事罷？」（他的聲音因後怕而微微發顫，這是{name}第一次見他如此失態）' },
+      { text: '{name}搖頭，正想開口寬慰，卻被他忽然收緊的擁抱打斷——短暫、克制，卻帶著毫不掩飾的後怕。' },
+    ],
+    choices: [
+      { text: '回抱住他，什麼也不說', next: 'zy3b', effect: { affection: { zhaoyun: 3 }, flags: ['zy3_embrace'] } },
+      { text: '「子龍將軍……」（輕聲喚他，讓他放心）', next: 'zy3b', effect: { affection: { zhaoyun: 2 }, flags: ['zy3_call'] } },
+    ],
+  },
+  zy3b: {
+    bg: 'path_forest',
+    lines: [
+      { speaker: '趙雲', text: '「方才那一瞬，我腦子裡什麼家國大義都想不起來了，滿心只有一個念頭——絕不能讓妳出事。」（他退開半步，眼神卻無比認真地看著她）「{name}，我趙子龍一生征戰，生死早已看淡，唯獨如今，忽然怕起死來——怕還沒能護妳一世周全，便先去了。」' },
+      { speaker: '趙雲', text: '「我知道這府裡，情之一字，向來說不清道不明。可我趙雲，願給妳的，是堂堂正正、清清楚楚的一顆心，容不下半點藏掖。妳可願意，收下？」' },
+    ],
+    choices: [
+      { text: '「子龍將軍這份坦蕩，小女子……願意收下。」（接受）', next: 'zy3c', effect: { affection: { zhaoyun: 4 }, flags: ['zy_committed'] } },
+      { text: '「將軍的心意，小女子心領了，只是眼下這份心，尚有旁的牽絆，容小女子想清楚再答將軍。」（誠實告知）', next: 'zy3c', effect: { affection: { zhaoyun: 2 }, flags: ['zy_undecided'] } },
+    ],
+  },
+  zy3c: {
+    bg: 'path_forest',
+    onEnter: { flags: ['clue_zy_choice'] },
+    lines: [
+      { text: '趙雲聞言，素來沉穩的臉上難得漾開一抹近乎少年人的笑意，他鄭重地牽起她的手，如同起誓一般。', cond: 'zy_committed' },
+      { text: '趙雲怔了一下，隨即坦然一笑，並無半分惱意：「無妨，我趙雲等得起，也經得起等——妳想清楚了，我還在原地。」', cond: 'zy_undecided' },
+      { text: '夕陽將二人的影子拉得很長，這一場亂世裡，她終於也擁有了一段，不必計算、不必躲藏的坦蕩心意。【趙雲線 · 剖白 完】' },
+    ],
+    next: 'hub',
+  },
 };
 
 // 支线场景清单（用于枢纽画面按序展示）
-const THREAD_ORDER = ['lb1', 'lb2', 'lb3', 'zl1', 'zl2', 'zl3', 'gf1'];
+const THREAD_ORDER = [
+  'lb1', 'lb2', 'lb3', 'lb4', 'lb5',
+  'zl1', 'zl2', 'zl3', 'zl4', 'zl5',
+  'zy1', 'zy2', 'zy3',
+  'gf1',
+];
 
 if (typeof module !== 'undefined') {
   module.exports = { CHARACTERS, THREADS, CODEX, SCENES, THREAD_ORDER, t };

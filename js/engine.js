@@ -309,7 +309,7 @@ function renderHubAffection() {
   ];
   rows.forEach(([key, label]) => {
     const val = state.affection[key] || 0;
-    const pct = Math.min(100, (val / 12) * 100);
+    const pct = Math.min(100, (val / 20) * 100);
     const row = document.createElement('div');
     row.className = 'affection-row';
     row.innerHTML = `
@@ -330,7 +330,7 @@ function renderHubThreads() {
     const card = document.createElement('button');
     card.className = 'thread-card' + (done ? ' done' : '') + (!unlocked ? ' locked' : '');
     card.disabled = !unlocked || done;
-    const routeLabel = { liubei: '劉備線', zhuge: '諸葛亮線', ganfuren: '甘夫人' }[def.route];
+    const routeLabel = { liubei: '劉備線', zhuge: '諸葛亮線', zhaoyun: '趙雲線', ganfuren: '甘夫人' }[def.route];
     card.innerHTML = `
       <div class="thread-route">${routeLabel}</div>
       <div class="thread-name">${unlocked ? def.name : '？？？'}</div>
@@ -342,7 +342,8 @@ function renderHubThreads() {
     el.appendChild(card);
   });
 
-  const allMainDone = state.completedThreads.lb3 && state.completedThreads.zl3 && state.completedThreads.gf1;
+  const allMainDone = state.completedThreads.lb5 && state.completedThreads.zl5 &&
+    state.completedThreads.zy3 && state.completedThreads.gf1;
   const banner = document.getElementById('hub-banner');
   if (allMainDone) {
     banner.textContent = '【第一卷 · 完】敬請期待後續章節——魏、吳風雲，即將展開。';
