@@ -306,6 +306,11 @@ body {
     linear-gradient(180deg, rgba(28,26,23,0) 0%, var(--ink-black) 100%),
     linear-gradient(200deg, #6b3a2a 0%, #3a2620 45%, #1c1a17 100%);
 }
+.scene-night {
+  background:
+    linear-gradient(180deg, rgba(28,26,23,0) 0%, var(--ink-black) 100%),
+    linear-gradient(200deg, #2a3038 0%, #221f1c 50%, #1c1a17 100%);
+}
 
 .dialogue-box {
   width: min(680px, 94vw);

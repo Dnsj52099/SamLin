@@ -6,6 +6,8 @@ const state = {
   name: "",
   zhao: 0,
   zhuge: 0,
+  zhaoArc: 0,
+  zhugeArc: 0,
   currentNode: "p1",
 };
 
@@ -102,8 +104,11 @@ function renderNode(nodeId) {
     return;
   }
 
-  if (node.choices && node.choices.length) {
-    node.choices.forEach((choice) => {
+  const resolvedChoices =
+    typeof node.choices === "function" ? node.choices(state) : node.choices;
+
+  if (resolvedChoices && resolvedChoices.length) {
+    resolvedChoices.forEach((choice) => {
       const btn = document.createElement("button");
       btn.className = "btn choice-btn";
       btn.textContent = choice.label;
@@ -178,6 +183,8 @@ document.getElementById("btn-confirm-name").addEventListener("click", () => {
   state.name = val || "沈知微";
   state.zhao = 0;
   state.zhuge = 0;
+  state.zhaoArc = 0;
+  state.zhugeArc = 0;
   showScreen("story");
   renderNode("p1");
 });
