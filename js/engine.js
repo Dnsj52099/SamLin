@@ -23,18 +23,28 @@ let pendingCodex = [];
 // ---------------------------------------------------------------------
 // 存讀檔
 // ---------------------------------------------------------------------
+// 部分沙盒環境（如預覽用的內嵌 iframe）會封鎖或拋出例外，
+// 因此存讀檔一律容錯：失敗時遊戲仍可繼續，只是不會保留進度。
 function hasSave() {
-  return !!localStorage.getItem(SAVE_KEY);
+  try {
+    return !!localStorage.getItem(SAVE_KEY);
+  } catch (e) {
+    return false;
+  }
 }
 
 function saveGame() {
-  localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+  try {
+    localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+  } catch (e) {
+    // 存檔空間不可用，略過即可
+  }
 }
 
 function loadGame() {
-  const raw = localStorage.getItem(SAVE_KEY);
-  if (!raw) return false;
   try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (!raw) return false;
     const loaded = JSON.parse(raw);
     state = Object.assign(defaultState(), loaded);
     return true;
@@ -44,7 +54,11 @@ function loadGame() {
 }
 
 function resetGame() {
-  localStorage.removeItem(SAVE_KEY);
+  try {
+    localStorage.removeItem(SAVE_KEY);
+  } catch (e) {
+    // 忽略
+  }
   state = defaultState();
 }
 
