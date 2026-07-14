@@ -62,12 +62,41 @@ function saveGame() {
   }
 }
 
+// 早期版本只有在玩家把某支線最後一幕的台詞「全部」點完、實際觸發
+// 返回大廳時，才會記錄該支線已完成——若玩家在看完結尾文字後就沒
+// 再多按一下，該支線其實沒被記錄成功，會導致後續（例如「撞見」）
+// 支線始終無法解鎖。這裡用「該支線結尾才會拿到的拾遺線索」反推，
+// 把舊存檔裡漏記的完成狀態補回來。
+const THREAD_COMPLETION_EVIDENCE = {
+  lb3: 'clue_lb_confirm',
+  lb4: 'clue_lb_bond',
+  lb5: 'clue_lb_choice',
+  zl3: 'clue_zl_confirm',
+  zl4: 'clue_zl_bond',
+  zl5: 'clue_zl_choice',
+  zy1: 'clue_zy1',
+  zy2: 'clue_zy2',
+  zy3: 'clue_zy_choice',
+  gf1: 'clue_xinghun',
+  peek1: 'clue_witnessed',
+};
+
+function repairCompletedThreads() {
+  Object.keys(THREAD_COMPLETION_EVIDENCE).forEach((threadId) => {
+    const flag = THREAD_COMPLETION_EVIDENCE[threadId];
+    if (state.flags[flag] && !state.completedThreads[threadId]) {
+      state.completedThreads[threadId] = true;
+    }
+  });
+}
+
 function loadGame() {
   try {
     const raw = localStorage.getItem(SAVE_KEY);
     if (!raw) return false;
     const loaded = JSON.parse(raw);
     state = Object.assign(defaultState(), loaded);
+    repairCompletedThreads();
     return true;
   } catch (e) {
     return false;
@@ -163,6 +192,13 @@ function renderScene() {
     state.flags['__entered_' + state.currentScene] = true;
   }
   unlockCodexFromFlags();
+
+  // 一旦進到某支線「最後一幕」（next 直接指向 hub），就先把該支線記為
+  // 已完成，不必等玩家把最後幾句話全部點完、真的按到返回大廳為止——
+  // 避免玩家看完結尾文字就以為玩完了、卻因為沒再多按一下而沒被記錄。
+  if (sceneDef.next === 'hub' && state.activeThread && !state.completedThreads[state.activeThread]) {
+    state.completedThreads[state.activeThread] = true;
+  }
 
   const stage = document.getElementById('stage');
   stage.className = 'bg-' + (sceneDef.bg || 'default');
