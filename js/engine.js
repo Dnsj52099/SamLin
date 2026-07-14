@@ -429,19 +429,27 @@ function initGame() {
     });
   });
 
-  document.getElementById('btn-hub-restart').onclick = () => {
-    let ok = true;
-    try {
-      ok = confirm('確定要重新開始遊戲嗎？所有進度將會遺失。');
-    } catch (e) {
-      ok = true; // 部分沙盒環境會封鎖 confirm()，此時直接放行
+  // 部分預覽環境會靜默封鎖 window.confirm()（不拋例外，直接回傳
+  // false），導致「重新開始」看起來完全沒反應。改用按鈕自身的
+  // 兩段式確認，不依賴瀏覽器原生對話框。
+  const restartBtn = document.getElementById('btn-hub-restart');
+  let restartArmed = false;
+  let restartTimer = null;
+  restartBtn.onclick = () => {
+    if (!restartArmed) {
+      restartArmed = true;
+      restartBtn.textContent = '確定重來？再按一次';
+      restartTimer = setTimeout(() => {
+        restartArmed = false;
+        restartBtn.textContent = '重新開始';
+      }, 3000);
+      return;
     }
-    if (ok) {
-      resetGame();
-      showScreen('screen-title');
-      document.getElementById('name-input-wrap').classList.add('hidden');
-      document.getElementById('btn-continue').classList.add('hidden');
-    }
+    clearTimeout(restartTimer);
+    restartArmed = false;
+    restartBtn.textContent = '重新開始';
+    resetGame();
+    startNewGame('唯馨');
   };
 }
 
