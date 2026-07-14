@@ -3,6 +3,27 @@
  * 純前端狀態機：處理場景推進、選項效果、好感度、存讀檔與畫面切換。
  */
 
+// 任何未攔截的例外都會顯示在畫面頂端，方便在無法開啟開發者工具的
+// 環境（例如預覽用的沙盒 iframe）中回報問題。
+function showFatalError(msg) {
+  let el = document.getElementById('fatal-error-banner');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'fatal-error-banner';
+    el.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:#b00020;' +
+      'color:#fff;padding:10px 16px;font-family:monospace;font-size:12px;white-space:pre-wrap;' +
+      'line-height:1.5;';
+    (document.body || document.documentElement).appendChild(el);
+  }
+  el.textContent = '⚠ 發生錯誤，請將這段文字回報：\n' + msg;
+}
+window.addEventListener('error', (e) => {
+  showFatalError((e.message || '未知錯誤') + '\n@ ' + (e.filename || '') + ':' + (e.lineno || '?'));
+});
+window.addEventListener('unhandledrejection', (e) => {
+  showFatalError('Promise 例外：' + (e.reason && e.reason.message ? e.reason.message : String(e.reason)));
+});
+
 const SAVE_KEY = 'sgyk_save_v1';
 
 const defaultState = () => ({
@@ -367,7 +388,10 @@ function renderHubCodex() {
 // ---------------------------------------------------------------------
 // 綁定
 // ---------------------------------------------------------------------
-document.addEventListener('DOMContentLoaded', () => {
+// 此腳本本就置於 <body> 最末端，執行當下所有元素其實都已存在——
+// 不必非得等 DOMContentLoaded 不可（某些外嵌預覽環境注入時機特殊，
+// 該事件有時不會如預期觸發），因此改用「若尚未就緒才等待，否則立刻執行」。
+function initGame() {
   const continueBtn = document.getElementById('btn-continue');
   if (hasSave()) {
     continueBtn.classList.remove('hidden');
@@ -406,11 +430,31 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   document.getElementById('btn-hub-restart').onclick = () => {
-    if (confirm('確定要重新開始遊戲嗎？所有進度將會遺失。')) {
+    let ok = true;
+    try {
+      ok = confirm('確定要重新開始遊戲嗎？所有進度將會遺失。');
+    } catch (e) {
+      ok = true; // 部分沙盒環境會封鎖 confirm()，此時直接放行
+    }
+    if (ok) {
       resetGame();
       showScreen('screen-title');
       document.getElementById('name-input-wrap').classList.add('hidden');
       document.getElementById('btn-continue').classList.add('hidden');
     }
   };
-});
+}
+
+function boot() {
+  try {
+    initGame();
+  } catch (err) {
+    showFatalError('初始化失敗：' + (err && err.stack ? err.stack : String(err)));
+  }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', boot);
+} else {
+  boot();
+}
