@@ -463,8 +463,13 @@ function boot() {
   }
   try {
     // 暫時繞過標題畫面：某些預覽環境下標題畫面的按鈕互動不穩定，
-    // 因此直接以固定角色名開場，讓劇情本身先能被玩到。
-    startNewGame('唯馨');
+    // 因此直接開場，讓劇情本身先能被玩到。但仍要先看有沒有存檔，
+    // 否則每次重新整理都會把進度洗掉，等於形同無法存檔。
+    if (hasSave()) {
+      continueGame();
+    } else {
+      startNewGame('唯馨');
+    }
   } catch (err) {
     showFatalError('開場失敗：' + (err && err.stack ? err.stack : String(err)));
   }
