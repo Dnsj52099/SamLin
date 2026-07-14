@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>三國異客 · 半文言戀曲</title>
+<meta name="description" content="一場穿越三國的代入式對話遊戲——她墜落於蜀漢邊境，緩緩揭開那些青史未載的情義。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- ============ 標題畫面 ============ -->
+  <section id="screen-title" class="screen active">
+    <div class="title-scenery">
+      <div class="moon"></div>
+      <div class="mountains mountains-back"></div>
+      <div class="mountains mountains-front"></div>
+      <div class="bamboo-row"></div>
+    </div>
+    <div class="title-panel">
+      <p class="title-eyebrow">代入式半文言戀愛物語</p>
+      <h1 class="title-main">三國異客</h1>
+      <p class="title-sub">一夕雷雨，她墜落於蜀漢邊境<br>青史之外，尚有未曾書寫的情義</p>
+      <div class="title-buttons">
+        <button id="btn-new-game" class="menu-btn primary">開始新遊戲</button>
+        <button id="btn-continue" class="menu-btn hidden">繼續遊戲</button>
+      </div>
+      <div id="name-input-wrap" class="name-input-wrap hidden">
+        <label for="name-input">請賜女主角一個名字：</label>
+        <input id="name-input" type="text" maxlength="6" placeholder="蘇挽">
+        <button id="btn-confirm-name" class="menu-btn primary small">穿越開始</button>
+      </div>
+      <p class="title-footnote">首發章節：蜀漢線（劉備 × 諸葛亮）</p>
+    </div>
+  </section>
+
+  <!-- ============ 遊戲 / 對話畫面 ============ -->
+  <section id="screen-game" class="screen">
+    <div id="stage" class="bg-default">
+      <div class="vignette"></div>
+      <div id="dialogue-box">
+        <div id="speaker-name" class="hidden"></div>
+        <div id="dialogue-text" class="dialogue-text"></div>
+        <div id="choices" class="choices hidden"></div>
+        <button id="next-btn" class="next-btn">▼</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 樞紐畫面 ============ -->
+  <section id="screen-hub" class="screen">
+    <header class="hub-header">
+      <h2>蜀漢 · 新野</h2>
+      <p>旅人 <span id="hub-player-name">蘇挽</span> 於此暫居</p>
+    </header>
+
+    <div id="hub-banner" class="hub-banner hidden"></div>
+
+    <nav class="tab-nav">
+      <button class="tab-btn active" data-tab="threads">支線</button>
+      <button class="tab-btn" data-tab="affection">羈絆</button>
+      <button class="tab-btn" data-tab="characters">人物志</button>
+      <button class="tab-btn" data-tab="codex">拾遺</button>
+    </nav>
+
+    <div class="tab-panels">
+      <div id="tab-threads" class="tab-panel active">
+        <div id="thread-list" class="thread-list"></div>
+      </div>
+      <div id="tab-affection" class="tab-panel">
+        <div id="affection-list" class="affection-list"></div>
+      </div>
+      <div id="tab-characters" class="tab-panel">
+        <div id="character-list" class="character-list"></div>
+      </div>
+      <div id="tab-codex" class="tab-panel">
+        <div id="codex-list" class="codex-list"></div>
+      </div>
+    </div>
+
+    <footer class="hub-footer">
+      <button id="btn-hub-restart" class="menu-btn small ghost">重新開始</button>
+    </footer>
+  </section>
+
+  <!-- ============ 拾遺提示 Toast ============ -->
+  <div id="codex-toast" class="codex-toast hidden">
+    <span class="codex-toast-icon">✦</span>
+    <span class="codex-toast-title"></span>
+  </div>
+
+</div>
+
+<script src="js/story.js"></script>
+<script src="js/engine.js"></script>
+</body>
+</html>
