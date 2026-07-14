@@ -43,6 +43,10 @@ html, body {
   width: 100%;
 }
 .screen.active { display: block; }
+/* #screen-title 需要 flex 排版來置中內容，但顯示與否一律交給 .screen.active
+   決定——直接寫在 #screen-title 上會因 ID 選擇器優先度更高而蓋掉
+   .screen{display:none}，導致標題畫面永遠不會真正隱藏。 */
+#screen-title.active { display: flex; }
 
 button {
   font-family: var(--serif);
@@ -54,7 +58,6 @@ button {
   position: relative;
   background: radial-gradient(ellipse at 50% 20%, #2a2038 0%, #140f1c 55%, #0a0710 100%);
   min-height: 100vh;
-  display: flex;
   align-items: center;
   justify-content: center;
 }

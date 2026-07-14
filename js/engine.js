@@ -450,6 +450,14 @@ function boot() {
     initGame();
   } catch (err) {
     showFatalError('初始化失敗：' + (err && err.stack ? err.stack : String(err)));
+    return;
+  }
+  try {
+    // 暫時繞過標題畫面：某些預覽環境下標題畫面的按鈕互動不穩定，
+    // 因此直接以固定角色名開場，讓劇情本身先能被玩到。
+    startNewGame('唯馨');
+  } catch (err) {
+    showFatalError('開場失敗：' + (err && err.stack ? err.stack : String(err)));
   }
 }
 
