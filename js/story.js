@@ -36,6 +36,11 @@ const THREADS = {
   zl1: { name: '羽扇下的試探', route: 'zhuge', requires: () => true },
   zl2: { name: '藏書閣', route: 'zhuge', requires: (s) => s.affection.zhuge >= 3 },
   zl3: { name: '夜訪', route: 'zhuge', requires: (s) => s.affection.zhuge >= 5 },
+  peek1: {
+    name: '撞見',
+    route: 'lbzl',
+    requires: (s) => !!(s.completedThreads.lb3 && s.completedThreads.zl3),
+  },
   zl4: { name: '心結', route: 'zhuge', requires: (s) => !!s.completedThreads.zl3 },
   zl5: { name: '分寸', route: 'zhuge', requires: (s) => !!s.completedThreads.zl4 },
   zy1: { name: '習武', route: 'zhaoyun', requires: () => true },
@@ -81,6 +86,10 @@ const CODEX = {
   clue_zl_choice: {
     title: '孔明的知己之交',
     text: '諸葛亮直言，此生的深情早已許給主公，卻也願意將她，視作難得的知己與同伴。',
+  },
+  clue_witnessed: {
+    title: '撞見的那一夜',
+    text: '她親眼撞見劉備與諸葛亮相擁而立，額頭相抵，那般旁若無人的溫柔。自此，這座宅院裡，多了一個心甘情願守密的見證者。',
   },
   clue_zy1: {
     title: '校場槍花',
@@ -474,6 +483,49 @@ const SCENES = {
     ],
     next: 'hub',
   },
+
+  // ------------------------------------------------------------------
+  // 撞見 —— 劉備與諸葛亮共同支線
+  // ------------------------------------------------------------------
+  peek1: {
+    thread: 'peek1',
+    bg: 'study_night',
+    lines: [
+      { text: '入夜，{name}奉命為書房送去一疊剛謄抄好的文書，想著這個時辰劉備、諸葛亮多半仍在議事，也未曾多想，逕自推門而入。' },
+      { text: '門扉「吱呀」一聲輕響，映入眼簾的，卻是她萬萬沒料到的一幕——燭火昏黃裡，劉備與諸葛亮相擁而立，額頭相抵，四目相對，那般旁若無人的溫柔，全然不似君臣，倒像是尋常人家一對執手相守的伴侶。' },
+      { text: '三人俱是一怔。劉備猛然回神，臉色微變，下意識便要與諸葛亮拉開距離；諸葛亮反倒鎮定得多，只是眼底閃過一絲不易察覺的警惕，靜靜看著她，等她的反應。' },
+    ],
+    choices: [
+      { text: '立刻退出，輕輕帶上門，假裝什麼都沒看見（識趣迴避）', next: 'peek1b', effect: { affection: { liubei: 2, zhuge: 2 }, flags: ['peek_discreet'] } },
+      { text: '「小女子……不是有意的。」（坦然開口，主動打破尷尬）', next: 'peek1b', effect: { affection: { liubei: 1, zhuge: 2 }, flags: ['peek_honest'] } },
+    ],
+  },
+  peek1b: {
+    bg: 'study_night',
+    lines: [
+      { text: '她識趣地退出房外，正欲離開，身後房門卻又被拉開——劉備快步追了出來，神色間帶著幾分慌亂與歉然。', cond: 'peek_discreet' },
+      { speaker: '劉備', text: '「{name}，等等。」（他攔住她，深吸一口氣，勉力平復下心緒）「方才的話……」', cond: 'peek_discreet' },
+      { text: '她的坦然反倒讓劉備一時語塞。倒是諸葛亮先開了口，語氣一如既往地從容，卻難得帶了幾分不易察覺的鬆動。', cond: 'peek_honest' },
+      { speaker: '諸葛亮', text: '「姑娘倒是坦率。」他微微一笑，替劉備解圍，「想必，這也不是姑娘頭一回見著這般光景了。」', cond: 'peek_honest' },
+      { speaker: '劉備', text: '「這些日子，多虧妳替孤與孔明守著這樁秘密——今日這一撞，倒也好，孤與孔明也不必再事事避著妳了。」' },
+      { speaker: '諸葛亮', text: '「往後這府裡，能不避諱地在妳面前做回自己，倒也是難得的自在。」' },
+    ],
+    choices: [
+      { text: '「使君、先生不必如此見外，這份信任，小女子擔得起。」（鄭重承諾守密）', next: 'peek1c', effect: { affection: { liubei: 3, zhuge: 3 }, flags: ['peek_vow'] } },
+      { text: '「小女子只盼著，使君與先生，往後能更自在一些。」（單純祝福，不居功）', next: 'peek1c', effect: { affection: { liubei: 2, zhuge: 2 }, flags: ['peek_bless'] } },
+    ],
+  },
+  peek1c: {
+    bg: 'study_night',
+    onEnter: { flags: ['clue_witnessed'] },
+    lines: [
+      { text: '劉備聞言，鄭重頷首；諸葛亮也難得露出一抹毫無防備的笑意，兩人對視一眼，那眼神裡的默契，是她從未如此近距離見過的。', cond: 'peek_vow' },
+      { text: '劉備與諸葛亮對視一眼，皆是會心一笑，那笑意裡，竟也帶上了幾分對她的感激。', cond: 'peek_bless' },
+      { text: '自那夜之後，這座宅院裡，多了一個不必被瞞著、也心甘情願守著這份秘密的人。她忽然覺得，穿越至此，或許正是為了在這段被正史略去的情義裡，添一筆旁人不知的、溫柔的見證。【撞見 · 完】' },
+    ],
+    next: 'hub',
+  },
+
   zl4: {
     thread: 'zl4',
     bg: 'library_night',
@@ -666,8 +718,11 @@ const SCENES = {
 
 // 支线场景清单（用于枢纽画面按序展示）
 const THREAD_ORDER = [
-  'lb1', 'lb2', 'lb3', 'lb4', 'lb5',
-  'zl1', 'zl2', 'zl3', 'zl4', 'zl5',
+  'lb1', 'lb2', 'lb3',
+  'zl1', 'zl2', 'zl3',
+  'peek1',
+  'lb4', 'lb5',
+  'zl4', 'zl5',
   'zy1', 'zy2', 'zy3',
   'gf1',
 ];
