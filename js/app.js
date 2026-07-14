@@ -142,7 +142,7 @@ function openOverlay(kind) {
         card.innerHTML = `
           <div class="codex-card-head">
             <span class="codex-name">${person.name}</span>
-            <span class="codex-status">${person.status}</span>
+            <span class="codex-status${person.status === "已故" ? " status-dead" : ""}">${person.status}</span>
           </div>
           <div class="codex-title">${person.title}</div>
           <p class="codex-desc">${person.desc}</p>

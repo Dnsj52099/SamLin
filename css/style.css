@@ -281,6 +281,11 @@ body {
     linear-gradient(180deg, rgba(28,26,23,0) 0%, var(--ink-black) 100%),
     linear-gradient(200deg, #3a2f27 0%, #2b241d 50%, #1c1a17 100%);
 }
+.scene-hall {
+  background:
+    linear-gradient(180deg, rgba(28,26,23,0) 0%, var(--ink-black) 100%),
+    linear-gradient(200deg, #4a3820 0%, #362918 45%, #1c1a17 100%);
+}
 .scene-courtyard {
   background:
     linear-gradient(180deg, rgba(28,26,23,0) 0%, var(--ink-black) 100%),
@@ -440,6 +445,10 @@ body {
   border: 1px solid rgba(182,137,63,0.4);
   padding: 0.1rem 0.5rem;
   border-radius: 10px;
+}
+.codex-status.status-dead {
+  color: var(--text-dim);
+  border-color: rgba(168,154,124,0.3);
 }
 
 .codex-title {
