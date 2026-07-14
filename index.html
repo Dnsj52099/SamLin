@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>夢入蜀山 · 三國穿書錄</title>
+<meta name="description" content="一場穿書入蜀的代入式三國文字冒險" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;700;900&family=Ma+Shan+Zheng&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<div class="paper-texture"></div>
+
+<!-- 標題畫面 -->
+<section id="screen-title" class="screen active">
+  <div class="title-seal">夢</div>
+  <h1 class="title-main">夢入蜀山</h1>
+  <p class="title-sub">— 三國穿書代入錄 —</p>
+  <p class="title-flavor">一念之間，墜入蜀道；一卷書中，情牽三國。</p>
+
+  <div class="title-menu">
+    <button id="btn-new-game" class="btn title-btn">開始新旅程</button>
+    <button id="btn-continue-save" class="btn title-btn" style="display:none;">續上回</button>
+    <button id="btn-codex-title" class="btn title-btn ghost">人物誌</button>
+    <button id="btn-worldview-title" class="btn title-btn ghost">世界觀</button>
+  </div>
+
+  <p class="title-footnote">本站為虛構同人創作，人物取材自史書與通俗演義，情節純屬藝術想像。</p>
+</section>
+
+<!-- 命名畫面 -->
+<section id="screen-naming" class="screen">
+  <div class="naming-box">
+    <h2 class="naming-title">妳，喚作——</h2>
+    <p class="naming-desc">穿書入蜀，總得有個稱呼。（可留白，隨緣賜名）</p>
+    <input id="name-input" type="text" maxlength="6" placeholder="沈知微" />
+    <button id="btn-confirm-name" class="btn title-btn">啟程</button>
+  </div>
+</section>
+
+<!-- 主劇情畫面 -->
+<section id="screen-story" class="screen">
+  <header class="story-header">
+    <span class="story-header-title">夢入蜀山</span>
+    <button id="btn-menu" class="btn icon-btn">選單</button>
+  </header>
+
+  <div id="in-game-menu" class="in-game-menu">
+    <button id="btn-menu-codex" class="btn choice-btn">人物誌</button>
+    <button id="btn-menu-worldview" class="btn choice-btn">世界觀</button>
+    <button id="btn-menu-title" class="btn choice-btn ghost">回到標題</button>
+  </div>
+
+  <div id="stage" class="stage scene-void">
+    <div class="stage-vignette"></div>
+  </div>
+
+  <div class="dialogue-box">
+    <div id="speaker-name" class="speaker-name"></div>
+    <div id="story-text" class="story-text"></div>
+    <div id="choices" class="choices"></div>
+    <button id="continue-btn" class="btn continue-btn" style="display:none;">▶ 繼續</button>
+  </div>
+</section>
+
+<!-- 疊層：人物誌 / 世界觀 -->
+<div id="overlay" class="overlay">
+  <div class="overlay-panel">
+    <div class="overlay-head">
+      <span id="overlay-title" class="overlay-title">人物誌</span>
+      <button id="overlay-close" class="btn icon-btn">✕</button>
+    </div>
+    <div id="overlay-body" class="overlay-body"></div>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

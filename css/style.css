@@ -1,0 +1,475 @@
+:root {
+  --ink-black: #1c1a17;
+  --ink-dark: #26221d;
+  --ink-mid: #3a332a;
+  --parchment: #e9dfc7;
+  --parchment-dim: #d8caa3;
+  --parchment-soft: #f2e9d3;
+  --gold: #b6893f;
+  --gold-soft: #cba55e;
+  --seal-red: #8c2b25;
+  --seal-red-bright: #a8352c;
+  --text-dim: #a89a7c;
+  --font-brush: "Ma Shan Zheng", cursive;
+  --font-serif: "Noto Serif TC", "PMingLiU", serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100%;
+  background: var(--ink-black);
+  color: var(--parchment);
+  font-family: var(--font-serif);
+  overflow-x: hidden;
+}
+
+body {
+  position: relative;
+  background:
+    radial-gradient(ellipse at 20% 10%, rgba(182, 137, 63, 0.08), transparent 55%),
+    radial-gradient(ellipse at 85% 80%, rgba(140, 43, 37, 0.10), transparent 50%),
+    linear-gradient(180deg, #171512 0%, #1c1a17 40%, #14120f 100%);
+  min-height: 100vh;
+}
+
+.paper-texture {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.5;
+  background-image:
+    repeating-linear-gradient(0deg, rgba(255,255,255,0.012) 0px, transparent 1px, transparent 2px),
+    repeating-linear-gradient(90deg, rgba(255,255,255,0.012) 0px, transparent 1px, transparent 2px);
+  mix-blend-mode: overlay;
+}
+
+/* ───────── 畫面切換 ───────── */
+
+.screen {
+  display: none;
+  min-height: 100vh;
+  position: relative;
+  z-index: 2;
+}
+
+.screen.active {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ───────── 標題畫面 ───────── */
+
+#screen-title {
+  justify-content: center;
+  padding: 6vh 1.5rem 4vh;
+  text-align: center;
+  gap: 0.2rem;
+}
+
+.title-seal {
+  width: 3.4rem;
+  height: 3.4rem;
+  border-radius: 6px;
+  background: linear-gradient(160deg, var(--seal-red-bright), var(--seal-red));
+  color: var(--parchment-soft);
+  font-family: var(--font-brush);
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.4), 0 6px 18px rgba(140,43,37,0.35);
+  margin-bottom: 1.2rem;
+  transform: rotate(-3deg);
+}
+
+.title-main {
+  font-family: var(--font-brush);
+  font-size: clamp(3rem, 12vw, 5.5rem);
+  color: var(--parchment-soft);
+  margin: 0;
+  letter-spacing: 0.15em;
+  text-shadow: 0 0 30px rgba(182,137,63,0.25), 0 2px 0 rgba(0,0,0,0.4);
+}
+
+.title-sub {
+  font-size: 1rem;
+  letter-spacing: 0.4em;
+  color: var(--gold-soft);
+  margin: 0.4rem 0 0.2rem;
+}
+
+.title-flavor {
+  color: var(--text-dim);
+  font-size: 0.92rem;
+  margin: 0.6rem 0 2.4rem;
+  letter-spacing: 0.06em;
+}
+
+.title-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  width: min(320px, 82vw);
+}
+
+.title-footnote {
+  position: absolute;
+  bottom: 1.4rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.72rem;
+  color: rgba(168,154,124,0.55);
+  width: 90%;
+  text-align: center;
+}
+
+/* ───────── 命名畫面 ───────── */
+
+#screen-naming {
+  justify-content: center;
+  padding: 2rem;
+}
+
+.naming-box {
+  width: min(360px, 88vw);
+  text-align: center;
+  border: 1px solid rgba(182,137,63,0.3);
+  padding: 2.4rem 1.8rem;
+  background: rgba(38, 34, 29, 0.6);
+  border-radius: 4px;
+}
+
+.naming-title {
+  font-family: var(--font-brush);
+  font-size: 2rem;
+  color: var(--parchment-soft);
+  margin: 0 0 0.6rem;
+}
+
+.naming-desc {
+  color: var(--text-dim);
+  font-size: 0.85rem;
+  margin-bottom: 1.4rem;
+  line-height: 1.7;
+}
+
+#name-input {
+  width: 100%;
+  background: rgba(0,0,0,0.25);
+  border: 1px solid rgba(182,137,63,0.4);
+  color: var(--parchment-soft);
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  padding: 0.7rem 0.9rem;
+  text-align: center;
+  border-radius: 3px;
+  margin-bottom: 1.4rem;
+  letter-spacing: 0.1em;
+}
+#name-input::placeholder { color: rgba(168,154,124,0.5); }
+#name-input:focus { outline: none; border-color: var(--gold-soft); }
+
+/* ───────── 按鈕 ───────── */
+
+.btn {
+  cursor: pointer;
+  font-family: var(--font-serif);
+  border: 1px solid var(--gold);
+  background: linear-gradient(160deg, rgba(182,137,63,0.16), rgba(182,137,63,0.05));
+  color: var(--parchment-soft);
+  padding: 0.75rem 1.2rem;
+  font-size: 0.98rem;
+  letter-spacing: 0.12em;
+  border-radius: 3px;
+  transition: background 0.2s ease, transform 0.15s ease, border-color 0.2s ease;
+}
+.btn:hover {
+  background: linear-gradient(160deg, rgba(182,137,63,0.32), rgba(182,137,63,0.12));
+  border-color: var(--gold-soft);
+  transform: translateY(-1px);
+}
+.btn:active { transform: translateY(0); }
+
+.title-btn { width: 100%; }
+
+.btn.ghost {
+  background: transparent;
+  border-color: rgba(182,137,63,0.35);
+  color: var(--text-dim);
+}
+.btn.ghost:hover { color: var(--parchment-soft); }
+
+.icon-btn {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;
+}
+
+/* ───────── 劇情畫面 ───────── */
+
+#screen-story { align-items: stretch; padding-bottom: 2rem; }
+
+.story-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.9rem 1.2rem;
+  border-bottom: 1px solid rgba(182,137,63,0.25);
+  position: sticky;
+  top: 0;
+  background: rgba(23,21,18,0.85);
+  backdrop-filter: blur(4px);
+  z-index: 5;
+}
+
+.story-header-title {
+  font-family: var(--font-brush);
+  font-size: 1.3rem;
+  color: var(--gold-soft);
+  letter-spacing: 0.1em;
+}
+
+.in-game-menu {
+  display: none;
+  flex-direction: column;
+  gap: 0.6rem;
+  position: absolute;
+  top: 3.4rem;
+  right: 1.2rem;
+  background: rgba(28,26,23,0.96);
+  border: 1px solid rgba(182,137,63,0.3);
+  padding: 0.8rem;
+  border-radius: 4px;
+  z-index: 6;
+  width: 170px;
+}
+.in-game-menu.active { display: flex; }
+
+.stage {
+  height: 34vh;
+  min-height: 200px;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(182,137,63,0.25);
+}
+
+.stage-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 40%, transparent 30%, rgba(20,18,15,0.65) 100%);
+}
+
+/* 場景配色（水墨層疊，無需外部圖片） */
+.scene-void { background: linear-gradient(180deg, #16140f, #201c17); }
+.scene-mountain {
+  background:
+    linear-gradient(180deg, rgba(28,26,23,0) 0%, var(--ink-black) 100%),
+    linear-gradient(200deg, #4a4438 0%, #2c2822 45%, #1c1a17 100%);
+}
+.scene-road {
+  background:
+    linear-gradient(180deg, rgba(28,26,23,0) 0%, var(--ink-black) 100%),
+    linear-gradient(190deg, #3f3a2e 0%, #2a2620 55%, #1c1a17 100%);
+}
+.scene-court {
+  background:
+    linear-gradient(180deg, rgba(28,26,23,0) 0%, var(--ink-black) 100%),
+    linear-gradient(200deg, #3a2f27 0%, #2b241d 50%, #1c1a17 100%);
+}
+.scene-courtyard {
+  background:
+    linear-gradient(180deg, rgba(28,26,23,0) 0%, var(--ink-black) 100%),
+    linear-gradient(210deg, #33362b 0%, #262922 50%, #1c1a17 100%);
+}
+.scene-field {
+  background:
+    linear-gradient(180deg, rgba(28,26,23,0) 0%, var(--ink-black) 100%),
+    linear-gradient(195deg, #4a3b28 0%, #2e2820 55%, #1c1a17 100%);
+}
+.scene-study {
+  background:
+    linear-gradient(180deg, rgba(28,26,23,0) 0%, var(--ink-black) 100%),
+    linear-gradient(200deg, #362a20 0%, #241f19 55%, #1c1a17 100%);
+}
+.scene-sunset {
+  background:
+    linear-gradient(180deg, rgba(28,26,23,0) 0%, var(--ink-black) 100%),
+    linear-gradient(200deg, #6b3a2a 0%, #3a2620 45%, #1c1a17 100%);
+}
+
+.dialogue-box {
+  width: min(680px, 94vw);
+  margin: 1.6rem auto 0;
+  padding: 1.6rem 1.6rem 1.8rem;
+  background: rgba(30, 27, 23, 0.72);
+  border: 1px solid rgba(182,137,63,0.28);
+  border-radius: 4px;
+  position: relative;
+}
+
+.speaker-name {
+  display: inline-block;
+  font-family: var(--font-brush);
+  font-size: 1.4rem;
+  color: var(--seal-red-bright);
+  background: rgba(140,43,37,0.12);
+  border: 1px solid rgba(140,43,37,0.4);
+  padding: 0.15rem 0.9rem;
+  border-radius: 3px;
+  margin-bottom: 0.9rem;
+}
+
+.story-text p {
+  margin: 0 0 1rem;
+  line-height: 2;
+  font-size: 1.02rem;
+  color: var(--parchment);
+  letter-spacing: 0.02em;
+  text-indent: 2em;
+}
+.story-text p:last-child { margin-bottom: 0; }
+
+.choices {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  margin-top: 1.4rem;
+}
+
+.choice-btn {
+  text-align: left;
+  line-height: 1.6;
+}
+
+.continue-btn {
+  margin-top: 1.4rem;
+  display: block;
+  margin-left: auto;
+  margin-right: 0;
+}
+
+.end-row {
+  display: flex;
+  gap: 0.8rem;
+  margin-top: 1.4rem;
+  flex-wrap: wrap;
+}
+.end-row .btn { flex: 1; min-width: 140px; }
+
+/* ───────── 疊層 ───────── */
+
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(10,9,7,0.78);
+  z-index: 20;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+}
+.overlay.active { display: flex; }
+
+.overlay-panel {
+  width: min(640px, 100%);
+  max-height: 84vh;
+  background: var(--ink-dark);
+  border: 1px solid rgba(182,137,63,0.35);
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.overlay-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.3rem;
+  border-bottom: 1px solid rgba(182,137,63,0.25);
+}
+
+.overlay-title {
+  font-family: var(--font-brush);
+  font-size: 1.5rem;
+  color: var(--gold-soft);
+}
+
+.overlay-body {
+  padding: 1.3rem;
+  overflow-y: auto;
+}
+
+.codex-faction {
+  font-family: var(--font-brush);
+  color: var(--seal-red-bright);
+  font-size: 1.15rem;
+  margin: 1.4rem 0 0.8rem;
+  text-align: center;
+}
+.codex-faction:first-child { margin-top: 0; }
+
+.codex-card {
+  background: rgba(233,223,199,0.04);
+  border: 1px solid rgba(182,137,63,0.2);
+  border-radius: 4px;
+  padding: 0.9rem 1.1rem;
+  margin-bottom: 0.8rem;
+}
+
+.codex-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.codex-name {
+  font-family: var(--font-brush);
+  font-size: 1.25rem;
+  color: var(--parchment-soft);
+}
+
+.codex-status {
+  font-size: 0.72rem;
+  color: var(--gold-soft);
+  border: 1px solid rgba(182,137,63,0.4);
+  padding: 0.1rem 0.5rem;
+  border-radius: 10px;
+}
+
+.codex-title {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  margin: 0.15rem 0 0.5rem;
+}
+
+.codex-desc {
+  font-size: 0.9rem;
+  line-height: 1.85;
+  color: var(--parchment);
+  margin: 0;
+}
+
+.worldview-p {
+  font-size: 0.94rem;
+  line-height: 2;
+  color: var(--parchment);
+  text-indent: 2em;
+  margin: 0 0 1.1rem;
+}
+
+/* ───────── RWD ───────── */
+
+@media (min-width: 720px) {
+  .stage { height: 40vh; }
+}
+
+@media (max-width: 420px) {
+  .title-main { letter-spacing: 0.08em; }
+  .dialogue-box { padding: 1.2rem 1.1rem 1.4rem; }
+}
